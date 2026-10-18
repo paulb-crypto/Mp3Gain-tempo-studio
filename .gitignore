@@ -1,0 +1,27 @@
+## Build and output artifacts
+[Bb]in/
+[Oo]bj/
+publish/
+dist/
+out/
+
+## Visual Studio & IDE files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+.idea/
+.vscode/
+
+## Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Audio temporary and backup files
+*.tmp
+*.bak
+*.original.mp3
+scratch/
+

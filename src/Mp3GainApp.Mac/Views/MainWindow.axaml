@@ -1,0 +1,321 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mp3GainApp.Mac.ViewModels"
+        x:Class="Mp3GainApp.Mac.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="MP3 Gain &amp; BPM Studio"
+        Width="1040" Height="860"
+        MinWidth="800" MinHeight="680"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F172A">
+
+    <Window.Styles>
+        <!-- Glass card style -->
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="#1E293B" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="BorderBrush" Value="#334155" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style Selector="Border.InnerCard">
+            <Setter Property="Background" Value="#0F172A" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderBrush" Value="#1E293B" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <!-- Preset buttons -->
+        <Style Selector="Button.Preset">
+            <Setter Property="Background" Value="#334155" />
+            <Setter Property="Foreground" Value="#E2E8F0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.Preset:pointerover">
+            <Setter Property="Background" Value="#475569" />
+        </Style>
+
+        <!-- Action buttons -->
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="#6366F1" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="18,10" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style Selector="Button.Primary:pointerover">
+            <Setter Property="Background" Value="#4F46E5" />
+        </Style>
+
+        <Style Selector="Button.Secondary">
+            <Setter Property="Background" Value="#334155" />
+            <Setter Property="Foreground" Value="#F1F5F9" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.Secondary:pointerover">
+            <Setter Property="Background" Value="#475569" />
+        </Style>
+
+        <Style Selector="Button.Danger">
+            <Setter Property="Background" Value="#DC2626" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.Danger:pointerover">
+            <Setter Property="Background" Value="#B91C1C" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Width="40" Height="40" CornerRadius="10" Background="#6366F1">
+                    <TextBlock Text="♪" FontSize="24" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="MP3 GAIN &amp; BPM STUDIO" FontSize="18" FontWeight="Bold" Foreground="#F8FAFC" LetterSpacing="0.5"/>
+                    <TextBlock Text="Professional Loudness Mastering &amp; WSOLA Tempo Tuning" FontSize="12" Foreground="#94A3B8"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="#334155" CornerRadius="12" Padding="10,4" IsVisible="{Binding HasBackup}">
+                    <TextBlock Text="🛡️ Original Backup Protected" FontSize="11" Foreground="#4ADE80" FontWeight="SemiBold"/>
+                </Border>
+                <Border Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="10,4">
+                    <TextBlock Text="macOS Studio Edition" FontSize="11" Foreground="#CBD5E1"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- MAIN SCROLLABLE CONTENT -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+
+                <!-- FILE SELECTION & METADATA -->
+                <Border Classes="Card" DragDrop.AllowDrop="True">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="4">
+                        <!-- Cover Artwork / Placeholder -->
+                        <Border Grid.Column="0" Width="100" Height="100" CornerRadius="8" Background="#0F172A" Margin="0,0,16,0" ClipToBounds="True">
+                            <Panel>
+                                <TextBlock Text="🎵" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           IsVisible="{Binding CurrentFile.AlbumArt, Converter={x:Static ObjectConverters.IsNull}}"/>
+                                <Image Source="{Binding CurrentFile.AlbumArt}" Stretch="UniformToFill"
+                                       IsVisible="{Binding CurrentFile.AlbumArt, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            </Panel>
+                        </Border>
+
+                        <!-- Track Details -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                            <TextBlock Text="{Binding CurrentFile.Title, FallbackValue='No MP3 Loaded'}"
+                                       FontSize="17" FontWeight="Bold" Foreground="#F8FAFC"/>
+                            <TextBlock Text="{Binding CurrentFile.Artist, FallbackValue='Select an MP3 file to analyze tempo and gain'}"
+                                       FontSize="13" Foreground="#94A3B8"/>
+                            <TextBlock Text="{Binding CurrentFile.Album, FallbackValue=''}"
+                                       FontSize="12" Foreground="#64748B"/>
+
+                            <!-- Technical Badges -->
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0" IsVisible="{Binding HasFileLoaded}">
+                                <Border Background="#0F172A" CornerRadius="4" Padding="6,2">
+                                    <TextBlock Text="{Binding CurrentFile.Duration, StringFormat='{}{0:mm\\:ss}'}" FontSize="11" Foreground="#CBD5E1"/>
+                                </Border>
+                                <Border Background="#0F172A" CornerRadius="4" Padding="6,2">
+                                    <TextBlock Text="{Binding CurrentFile.BitrateKbps, StringFormat='{}{0} kbps'}" FontSize="11" Foreground="#CBD5E1"/>
+                                </Border>
+                                <Border Background="#0F172A" CornerRadius="4" Padding="6,2">
+                                    <TextBlock Text="{Binding CurrentFile.SampleRate, StringFormat='{}{0} Hz'}" FontSize="11" Foreground="#CBD5E1"/>
+                                </Border>
+                                <Border Background="#0F172A" CornerRadius="4" Padding="6,2">
+                                    <TextBlock Text="{Binding CurrentFile.FileSizeFormatted}" FontSize="11" Foreground="#CBD5E1"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Open File Button -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8">
+                            <Button Content="📂 Browse MP3..." Classes="Secondary" Click="OnBrowseFileClicked" IsEnabled="{Binding !IsBusy}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 4 DIAGNOSTIC TILES -->
+                <Grid ColumnDefinitions="*,*,*,*" Margin="0,0,0,0">
+                    <!-- Tile 1: Peak Level -->
+                    <Border Grid.Column="0" Classes="Card" Margin="0,0,8,0">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="PEAK LEVEL" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" LetterSpacing="0.5"/>
+                            <TextBlock Text="{Binding AnalysisResult.PeakSummary, FallbackValue='-- dBFS'}"
+                                       FontSize="20" FontWeight="Bold" Foreground="#F8FAFC"/>
+                            <TextBlock Text="{Binding AnalysisResult.StatusSummary, FallbackValue='Awaiting audio file'}"
+                                       FontSize="11" Foreground="{Binding AnalysisResult.IsClipping, Converter={x:Static ObjectConverters.IsNull}}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tile 2: Loudness -->
+                    <Border Grid.Column="1" Classes="Card" Margin="4,0,4,0">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="INTEGRATED LOUDNESS" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" LetterSpacing="0.5"/>
+                            <TextBlock Text="{Binding AnalysisResult.LufsSummary, FallbackValue='-- LUFS'}"
+                                       FontSize="20" FontWeight="Bold" Foreground="#60A5FA"/>
+                            <TextBlock Text="ITU-R BS.1770 Standard" FontSize="11" Foreground="#64748B"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tile 3: Detected BPM -->
+                    <Border Grid.Column="2" Classes="Card" Margin="4,0,4,0">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="DETECTED TEMPO" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" LetterSpacing="0.5"/>
+                            <TextBlock Text="{Binding AnalysisResult.BpmSummary, FallbackValue='-- BPM'}"
+                                       FontSize="20" FontWeight="Bold" Foreground="#A78BFA"/>
+                            <TextBlock Text="Spectral Energy Flux" FontSize="11" Foreground="#64748B"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tile 4: Recommended Gain -->
+                    <Border Grid.Column="3" Classes="Card" Margin="8,0,0,0">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="TARGET AUTO-GAIN" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" LetterSpacing="0.5"/>
+                            <TextBlock Text="{Binding AnalysisResult.RecommendedGainDb, StringFormat='{}{0:+0.0;-0.0;0.0} dB', FallbackValue='-- dB'}"
+                                       FontSize="20" FontWeight="Bold" Foreground="#4ADE80"/>
+                            <Button Content="⚡ Auto-Apply" Classes="Preset" Command="{Binding ApplyAutoGainCommand}"
+                                    HorizontalAlignment="Left" Padding="6,2" FontSize="10" IsEnabled="{Binding HasFileLoaded}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- CONTROLS: GAIN & TEMPO CARDS -->
+                <Grid ColumnDefinitions="*,*" Margin="0,0,0,0">
+                    <!-- VOLUME GAIN CARD -->
+                    <Border Grid.Column="0" Classes="Card" Margin="0,0,8,0">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <TextBlock Grid.Column="0" Text="Volume Gain (dB)" FontWeight="Bold" Foreground="#F8FAFC" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Text="{Binding GainInputText, Mode=TwoWay}" Width="70" Margin="0,0,8,0"
+                                         HorizontalContentAlignment="Center" Background="#0F172A" BorderBrush="#334155" Foreground="#4ADE80" FontWeight="Bold"/>
+                                <Button Grid.Column="2" Content="Reset" Classes="Preset" Command="{Binding ResetGainCommand}" Padding="8,4" FontSize="11"/>
+                            </Grid>
+
+                            <!-- Gain Slider -->
+                            <Slider Minimum="-15" Maximum="15" Value="{Binding GainDb, Mode=TwoWay}"
+                                    TickFrequency="1" IsSnapToTickEnabled="False"/>
+
+                            <!-- Gain Presets -->
+                            <Grid ColumnDefinitions="*,*,*,*,*">
+                                <Button Grid.Column="0" Content="-3 dB" Classes="Preset" Command="{Binding SetGainPresetCommand}" CommandParameter="-3" Margin="2,0"/>
+                                <Button Grid.Column="1" Content="0 dB" Classes="Preset" Command="{Binding SetGainPresetCommand}" CommandParameter="0" Margin="2,0"/>
+                                <Button Grid.Column="2" Content="+3 dB" Classes="Preset" Command="{Binding SetGainPresetCommand}" CommandParameter="3" Margin="2,0"/>
+                                <Button Grid.Column="3" Content="+6 dB" Classes="Preset" Command="{Binding SetGainPresetCommand}" CommandParameter="6" Margin="2,0"/>
+                                <Button Grid.Column="4" Content="Auto" Classes="Preset" Command="{Binding ApplyAutoGainCommand}" Margin="2,0"/>
+                            </Grid>
+
+                            <!-- Anti-clipping limiter checkbox -->
+                            <CheckBox IsChecked="{Binding PreventClipping, Mode=TwoWay}" Margin="0,4,0,0">
+                                <TextBlock Text="Anti-Clipping Soft-Knee Limiter (Prevents Digital Harshness)" FontSize="12" Foreground="#CBD5E1"/>
+                            </CheckBox>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- BPM / TEMPO CARD -->
+                    <Border Grid.Column="1" Classes="Card" Margin="8,0,0,0">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <TextBlock Grid.Column="0" Text="Tempo &amp; BPM Adjustment" FontWeight="Bold" Foreground="#F8FAFC" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Text="{Binding BpmInputText, Mode=TwoWay}" Width="75" Margin="0,0,8,0"
+                                         HorizontalContentAlignment="Center" Background="#0F172A" BorderBrush="#334155" Foreground="#A78BFA" FontWeight="Bold"/>
+                                <Button Grid.Column="2" Content="Reset" Classes="Preset" Command="{Binding ResetBpmCommand}" Padding="8,4" FontSize="11"/>
+                            </Grid>
+
+                            <!-- Tempo Slider -->
+                            <Slider Minimum="-30" Maximum="50" Value="{Binding TempoSliderValue, Mode=TwoWay}"
+                                    TickFrequency="1" IsSnapToTickEnabled="False"/>
+
+                            <!-- Tempo Presets -->
+                            <Grid ColumnDefinitions="*,*,*,*,*">
+                                <Button Grid.Column="0" Content="0.5x" Classes="Preset" Command="{Binding SetTempoPresetCommand}" CommandParameter="half" Margin="2,0"/>
+                                <Button Grid.Column="1" Content="-5%" Classes="Preset" Command="{Binding SetTempoPresetCommand}" CommandParameter="-5" Margin="2,0"/>
+                                <Button Grid.Column="2" Content="Match" Classes="Preset" Command="{Binding SetTempoPresetCommand}" CommandParameter="0" Margin="2,0"/>
+                                <Button Grid.Column="3" Content="+5%" Classes="Preset" Command="{Binding SetTempoPresetCommand}" CommandParameter="5" Margin="2,0"/>
+                                <Button Grid.Column="4" Content="2.0x" Classes="Preset" Command="{Binding SetTempoPresetCommand}" CommandParameter="double" Margin="2,0"/>
+                            </Grid>
+
+                            <TextBlock Text="Pitch-Preserving WSOLA: Audio changes tempo naturally without cartoon chipmunk pitch."
+                                       FontSize="11" Foreground="#64748B"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- AUDIO PREVIEW PLAYER -->
+                <Border Classes="Card">
+                    <StackPanel Spacing="12">
+                        <!-- Transport Controls & VU Meter Row -->
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <!-- Transport Buttons -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                                <Button Content="⏮ -5s" Classes="Preset" Command="{Binding SkipBackwardCommand}" Padding="10,6"/>
+                                <Button Content="▶ Play" Classes="Primary" Command="{Binding PlayCommand}" IsVisible="{Binding !IsPlaying}" Padding="16,6"/>
+                                <Button Content="⏸ Pause" Classes="Secondary" Command="{Binding PauseCommand}" IsVisible="{Binding IsPlaying}" Padding="16,6"/>
+                                <Button Content="⏹ Stop" Classes="Secondary" Command="{Binding StopCommand}" Padding="12,6"/>
+                                <Button Content="+5s ⏭" Classes="Preset" Command="{Binding SkipForwardCommand}" Padding="10,6"/>
+                            </StackPanel>
+
+                            <!-- Live VU Meter -->
+                            <Grid Grid.Column="1" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center" Margin="24,0,16,0">
+                                <TextBlock Grid.Column="0" Text="VU" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <ProgressBar Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding VuMeterLevel}" Height="12"
+                                             Foreground="#4ADE80" Background="#0F172A" CornerRadius="4"/>
+                                <TextBlock Grid.Column="2" Text="{Binding VuMeterDbText}" FontSize="11" Foreground="#94A3B8" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Clipping Badge -->
+                            <Border Grid.Column="2" Background="#DC2626" CornerRadius="4" Padding="6,2" VerticalAlignment="Center"
+                                    IsVisible="{Binding IsClippingLive}">
+                                <TextBlock Text="CLIP" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Timeline Scrubber -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="{Binding CurrentTimeFormatted}" FontSize="12" Foreground="#94A3B8" Width="45"/>
+                            <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding TimelineSliderValue, Mode=TwoWay}"
+                                    PointerCaptureLost="OnTimelinePointerCaptureLost"
+                                    PointerPressed="OnTimelinePointerPressed"
+                                    Margin="8,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding TotalTimeFormatted}" FontSize="12" Foreground="#94A3B8" Width="45" TextAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- FOOTER & ACTION BAR -->
+        <Border Grid.Row="2" Classes="Card" Margin="0,16,0,0" Padding="14">
+            <Grid ColumnDefinitions="*,Auto">
+                <!-- Status & Progress -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="4" Margin="0,0,16,0">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="13" Foreground="#E2E8F0" TextTrimming="CharacterEllipsis"/>
+                    <ProgressBar Height="4" Minimum="0" Maximum="100" Value="{Binding ProgressValue}"
+                                 IsIndeterminate="{Binding IsProgressIndeterminate}"
+                                 IsVisible="{Binding IsBusy}" Foreground="#6366F1" Background="#0F172A"/>
+                </StackPanel>
+
+                <!-- Actions -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Content="↩ Revert to Original" Classes="Danger" Command="{Binding RevertCommand}"/>
+                    <Button Content="💾 Save Copy As..." Classes="Secondary" Command="{Binding SaveCopyCommand}"/>
+                    <Button Content="✔ Save Changes to MP3" Classes="Primary" Command="{Binding SaveCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+

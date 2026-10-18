@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Brand Colors -->
+    <Color x:Key="AccentColor">#0078D4</Color>
+    <Color x:Key="AccentHoverColor">#1084D9</Color>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    
+    <!-- Modern Card Style -->
+    <Style x:Key="FluentCard" TargetType="Border">
+        <Setter Property="Background" Value="#1AFFFFFF" />
+        <Setter Property="BorderBrush" Value="#2AFFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <!-- Modern Badge Style -->
+    <Style x:Key="MetricBadge" TargetType="Border">
+        <Setter Property="Background" Value="#22FFFFFF" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+
+    <!-- Modern Slider Style -->
+    <Style x:Key="ModernSlider" TargetType="Slider">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TickPlacement" Value="None" />
+        <Setter Property="IsSnapToTickEnabled" Value="False" />
+        <Setter Property="Height" Value="28" />
+    </Style>
+
+</ResourceDictionary>
+
